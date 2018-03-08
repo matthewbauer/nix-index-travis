@@ -1,0 +1,4 @@
+language: nix
+deploy:
+  provider: releases
+  file: "result/files"
