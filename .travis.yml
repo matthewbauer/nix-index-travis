@@ -1,4 +1,28 @@
 language: nix
+
+script:
+  - nix-build -Q --argstr nixpkgs-url $NIXPKGS
+
 deploy:
   provider: releases
-  file: "result/files"
+  api_key:
+    secure: Sk4e7BbOEcAS2GDiQY3sziy2+xOZ2oV7kZObtJPVzQl6T1A0R4VJvaAdkptAFaGoOudVWfHQJPcFn2mr8HWruuM15dVGTyHVeYBjrIhL+FD/57WgBRPL2WQw0USZPtBQ0aagzLVMcttG1v8H76ruSoP/JYra0imhDRxYPsM0UMIig/84Xh4wCXnYxBQJ+CTqHPSwhp7MCpQD3qDolUsSnn8fljX1h0rGZ+Al4dAqVNWdUOTXgru+oOhQ3arrxf12HOJMY4Cr22IRo+ErRRowZnK7W6X5gCK6OXkSBjV4pC2fQjwuYM7DtpL0VFuF8UhR2PRiA0HV9wh1wSOP6K5SK1CBzNHm6gWyEkUKaY1j0Ufrho9hlr3Bem1qrf6zyhOBfvWJmYGya1WIyLpj3K+HaifHYCkcEfzJVDv2vO47lX8NLhltVfQ10vUtkZsBKTT5baKOxPPJ6R/jHN/aWmkKX+XNobDFLNqS750V4zchXUPyuTZiFi2b4xLRY3Taec/z9ZGUex1wAYSua6KVIBPxnz4p78gH8T5HbIYFtDb681h9bh08RB7BBMVUgwQEWFBvb6ntKOSSkEIOGUooJuEUkniFOxBM39VqWbeYK+AuZgqYt+knRbfROn46ULm6VHUnb8uwIY7miiod4FnG1/+Wzdz92OaHS0z/mAz4aIOK16E=
+  file: result/files
+  on:
+    repo: matthewbauer/nix-index-travis
+
+env:
+  - NIXPKGS=nixos.org/channels/nixos-unstable/nixexprs.tar.xz
+  - NIXPKGS=nixos.org/channels/nixpkgs-unstable/nixexprs.tar.xz
+
+sudo: false
+os:
+  - linux
+  - osx
+
+notifications:
+  email: false
+
+cache:
+  directories:
+    - /nix/store

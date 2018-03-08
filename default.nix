@@ -1,4 +1,6 @@
-{ nixpkgs ? <nixpkgs> }:
+{ nixpkgs-url ? null
+, nixpkgs ? if nixpkgs-url != null then builtins.fetchTarball nixpkgs-url
+                                   else <nixpkgs> }:
 with import nixpkgs {};
 
 runCommand "nix-index" {buildInputs = [nix-index nixStable];} ''
