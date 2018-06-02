@@ -1,31 +1,36 @@
 language: nix
-
 script:
-  - nix-build -Q --argstr nixpkgs-url $NIXPKGS
-
+- nix-build -o update update.nix
+- cp update nixpkgs.json
+- nix-build -o nix-index
+before_deploy:
+- rev=$(jq -r '.rev' nixpkgs.json)
+- git config user.email "travis@travis-ci.org"
+- git config user.name "Travis CI"
+- git add nixpkgs.json
+- git commit -m "nixpkgs update to $rev"
+- git tag $rev
+- git push --tags https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG $TRAVIS_BRANCH
 deploy:
   provider: releases
   api_key:
     secure: Sk4e7BbOEcAS2GDiQY3sziy2+xOZ2oV7kZObtJPVzQl6T1A0R4VJvaAdkptAFaGoOudVWfHQJPcFn2mr8HWruuM15dVGTyHVeYBjrIhL+FD/57WgBRPL2WQw0USZPtBQ0aagzLVMcttG1v8H76ruSoP/JYra0imhDRxYPsM0UMIig/84Xh4wCXnYxBQJ+CTqHPSwhp7MCpQD3qDolUsSnn8fljX1h0rGZ+Al4dAqVNWdUOTXgru+oOhQ3arrxf12HOJMY4Cr22IRo+ErRRowZnK7W6X5gCK6OXkSBjV4pC2fQjwuYM7DtpL0VFuF8UhR2PRiA0HV9wh1wSOP6K5SK1CBzNHm6gWyEkUKaY1j0Ufrho9hlr3Bem1qrf6zyhOBfvWJmYGya1WIyLpj3K+HaifHYCkcEfzJVDv2vO47lX8NLhltVfQ10vUtkZsBKTT5baKOxPPJ6R/jHN/aWmkKX+XNobDFLNqS750V4zchXUPyuTZiFi2b4xLRY3Taec/z9ZGUex1wAYSua6KVIBPxnz4p78gH8T5HbIYFtDb681h9bh08RB7BBMVUgwQEWFBvb6ntKOSSkEIOGUooJuEUkniFOxBM39VqWbeYK+AuZgqYt+knRbfROn46ULm6VHUnb8uwIY7miiod4FnG1/+Wzdz92OaHS0z/mAz4aIOK16E=
-  file: result/files
+  file: nix-index/files
   skip_cleanup: true
   draft: false
-  body: "nix-index database for "
+  body: 'nix-index database for '
   name: nix-index-$(echo $TRAVIS_OS_NAME)-$(date +'%d-%m-%Y').db
   on:
     repo: matthewbauer/nix-index-travis
-
-env:
-  - NIXPKGS=nixos.org/channels/nixpkgs-unstable/nixexprs.tar.xz
-
 sudo: false
 os:
-  - linux
-  - osx
-
+- linux
+- osx
 notifications:
   email: false
-
 cache:
   directories:
-    - /nix/store
+  - "/nix/store"
+env:
+  global:
+  - secure: GNNYy0HOY2H+gDBOwrV64bw3W9xcPZfg4UMM4PvVK+nIIsNtoTsIqmgW8YmR4zPFRUi/WBdHuQJ2mfltriZeFwr6eZuZjWhRyBr7iO4tGIypl+f84XIhb5kr4Owro7OKZvPwnJZEHuwFQr8TXlUGev7lu7VJk/Rs2QRF8L3S7Z3OZLZ/LAZKNNsEcvXGwE/1Pb+ox0RF1BLpLDyvlydv2ef64E6X+DfSH5Ne1Cxtxsc1X+OIzP385cykf+EUBoeN3XrS9UFigLD1HDJpD1Z+eop59f2ZhbsjD5zkpeaJ6xHID9Gx1bVixUPPbMxumHSvM4uSRZy7UjtoiYOj40mcjHrJ94RxZ8w7CKS5uyRQTrRvEX0jvthLiSCKLXz5ybZXJ+g3keD0LyCIcfUvRBXcOvn2loYrBWGgYXhNQJJaKWDUiF7+FAeCVW7uscoMZ6R8/BlefzMWbVpApE0LAyoCu3n18XIrq7M7DkyBHT0FeNfW67HdFuUGRdZNWlakb9WEvTp2QYtjCnk/NYVUFbjKoGOKQCoi1fFDkLup7Z2+1a8jQVsKLPvtIgGL5B8MbaYkbQhpaKJMv4Fs7/0Gz4fi4V2rJ+ThVh5o+QveEZRjQ9NgblVGF0iosjJ/zz1LJ3xhY1CDKwv+u8YUzpJR3n1ypvEhImrBZMfoT3I8HCpcvec=

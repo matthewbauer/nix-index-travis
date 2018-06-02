@@ -1,10 +1,11 @@
-{ nixpkgs-url ? null
-, nixpkgs ? if nixpkgs-url != null then builtins.fetchTarball nixpkgs-url
-                                   else <nixpkgs> }:
-with import nixpkgs {};
+{ nixpkgs ? hostPkgs.fetchFromGitHub
+            (builtins.fromJSON (builtins.readFile ./nixpkgs.json))
+, hostPkgs ? import <nixpkgs> {} }:
 
-runCommand "nix-index" {buildInputs = [nix-index nixStable];} ''
+hostPkgs.runCommand "nix-index" {
+  buildInputs = [ hostPkgs.nix-index hostPkgs.nix ];
+} ''
   export NIX_REMOTE=${builtins.getEnv "NIX_REMOTE"}
-  mkdir p $out
+  mkdir -p $out
   nix-index -d $out -f ${nixpkgs}
 ''
