@@ -3,13 +3,12 @@ script:
 - ./update.sh
 - nix-build -o nix-index
 before_deploy:
-- rev=$(jq -r '.rev' nixpkgs.json)
 - git config user.email "travis@travis-ci.org"
 - git config user.name "Travis CI"
 - git add nixpkgs.json
-- git commit -m "nixpkgs update to $rev"
-- git tag $rev
-- git push --tags https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG master
+- git commit -m "nixpkgs update on $(date +%Y%m%d)"
+- git tag $(date +%Y%m%d)
+- git push --tags https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG $TRAVIS_BRANCH
 deploy:
   provider: releases
   api_key:
