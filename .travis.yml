@@ -1,7 +1,6 @@
 language: nix
 script:
-- nix-build -o update update.nix
-- cp update nixpkgs.json
+- ./update.sh
 - nix-build -o nix-index
 before_deploy:
 - rev=$(jq -r '.rev' nixpkgs.json)
@@ -19,7 +18,7 @@ deploy:
   skip_cleanup: true
   draft: false
   body: 'nix-index database for '
-  name: nix-index-$(echo $TRAVIS_OS_NAME)-$(date +'%d-%m-%Y').db
+  name: nix-index-$(echo $TRAVIS_OS_NAME)-$(jq -r '.rev' nixpkgs.json).db
   on:
     repo: matthewbauer/nix-index-travis
 sudo: false
