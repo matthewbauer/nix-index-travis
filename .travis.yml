@@ -2,7 +2,7 @@ language: nix
 script:
 - ./update.sh
 - nix-build
-- mv result/nix-index nix-index-$TRAVIS_OS_NAME.db
+- mv result/files nix-index-$TRAVIS_OS_NAME.db
 before_deploy:
 - git config user.email "travis@travis-ci.org"
 - git config user.name "Travis CI"
