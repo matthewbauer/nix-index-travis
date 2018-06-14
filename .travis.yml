@@ -9,8 +9,7 @@ before_deploy:
 - git add nixpkgs.json
 - git commit -m "nixpkgs update for commit $(jq -r .rev nixpkgs.json)"
 - git tag nixpkgs-$(jq -r .rev nixpkgs.json)
-- git push --tags https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG
-$TRAVIS_BRANCH || true
+- git push --tags https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG $TRAVIS_BRANCH || true
 deploy:
   provider: releases
   api_key:
