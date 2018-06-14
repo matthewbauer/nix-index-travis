@@ -7,9 +7,10 @@ before_deploy:
 - git config user.email "travis@travis-ci.org"
 - git config user.name "Travis CI"
 - git add nixpkgs.json
-- git commit -m "nixpkgs update on $(date +%Y%m%d)"
-- git tag v$(date +%Y%m%d)
-- git push --tags https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG $TRAVIS_BRANCH
+- git commit -m "nixpkgs update for commit $(jq -r .rev nixpkgs.json)"
+- git tag nixpkgs-$(jq -r .rev nixpkgs.json)
+- git push --tags https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG
+$TRAVIS_BRANCH || true
 deploy:
   provider: releases
   api_key:
